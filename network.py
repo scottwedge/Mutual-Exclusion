@@ -24,7 +24,7 @@ def initializeSocket(portNum, socketAddresses):
 def listen(p1, clientsocket1, q):
     while True:
         try:
-            #Recieve data in small chunks
+            #Receive data in small chunks
             full_msg = ''
             new_msg = True
             while True: #Buffers data
@@ -37,7 +37,7 @@ def listen(p1, clientsocket1, q):
                 full_msg += msg.decode("utf-8")
 
                 if len(full_msg) - HEADERSIZE == msglen:
-                    print("full msg recieved!")
+                    print("full msg received!")
                     print(full_msg[HEADERSIZE:])
                     x = full_msg[HEADERSIZE:].split(',')
                     sendObject = []

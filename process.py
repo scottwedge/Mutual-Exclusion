@@ -11,7 +11,7 @@ def initializeSocket(portNum):
     s.connect((socket.gethostname(), portNum))
     return s
 
-def recieve(s, q):
+def receive(s, q):
     while True:
         full_msg = ''
         new_msg = True
@@ -25,9 +25,9 @@ def recieve(s, q):
             full_msg += msg.decode("utf-8")
 
             if len(full_msg) - HEADERSIZE == msglen:
-                print("full msg recieved!")
+                print("full msg received!")
                 print(full_msg[HEADERSIZE:])
-                full_msg = "recieve," + full_msg[HEADERSIZE:]
+                full_msg = "receive," + full_msg[HEADERSIZE:]
                 q.put(full_msg)
                 new_msg = True
                 full_msg = ''
@@ -45,8 +45,8 @@ def processingThread(q, lamportClock, s, processID):
                 sendMsg = events[1] + "," + events[2] + "," + events[3]
                 sendMsg = f'{len(sendMsg):<{HEADERSIZE}}' + sendMsg
                 s.send(bytes(sendMsg, "utf-8"))
-            elif events[0] == "recieve":
-                print("{0} recieve event: recieve message(\"{1}\") from {2}".format(processID, events[3], events[2]))
+            elif events[0] == "receive":
+                print("{0} receive event: receive message(\"{1}\") from {2}".format(processID, events[3], events[2]))
 
 def main():
     #Initial LamportClock State
@@ -56,7 +56,7 @@ def main():
     portNum = int(sys.argv[1])
     s = initializeSocket(portNum)
     #Creates communication thread
-    communication = threading.Thread(target=recieve, args=(s,q ))
+    communication = threading.Thread(target=receive, args=(s,q ))
     communication.start()
     #Connection Message
     processing = threading.Thread(target=processingThread, args=(q, lamportClock, s, portNum))
@@ -65,7 +65,7 @@ def main():
     while True:
         x = int(input('1 for Transfer Event, 2 Print Balance, and 3 for Print Blockchain: '))
         if x == 1:
-            amt, rec = input(str(portNum) + ' transfer event: Input amount and reciever ').split()
+            amt, rec = input(str(portNum) + ' transfer event: Input amount and receiver ').split()
             msg = 'send,' + str(portNum) + ',' + rec + ',' + amt
             q.put(msg)
         if x == 2:
